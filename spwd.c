@@ -1,4 +1,3 @@
-
 /*
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,17 +26,22 @@ int main(int argc, char** argv)
 {
   char cwd[512];
   char *lastslash, *nextslash, *home;
+  unsigned char physical = 1;
   int partsize, homelen;
 
   int option;
   unsigned long maxwidth = 40;
 
   /* Check command line arguments */
-  while((option = getopt(argc, argv, "hm:")) != -1) {
+  while((option = getopt(argc, argv, "PLhm:")) != -1) {
     switch(option) {
       case 'h':
-        printf("Smarter PWD. Usage %s [-m N]\n", argv[0]);
+        printf("Smarter PWD. Usage %s [OPTION]\n", argv[0]);
         exit(0);
+        break;
+
+      case 'L':
+        physical = 0;
         break;
 
       case 'm':
@@ -57,7 +61,14 @@ int main(int argc, char** argv)
     }
   }
 
-  getcwd(cwd, sizeof(cwd));
+  if(physical) {
+    getcwd(cwd, sizeof(cwd));
+  }
+  else {
+    char *pwd = getenv("PWD");
+    memcpy(cwd, pwd, strlen(pwd));
+  }
+
 
   /* Check if we are under home. If so, we can short it with ~ */
   if((home = getenv("HOME"))) {
