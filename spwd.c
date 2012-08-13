@@ -40,6 +40,10 @@ int main(int argc, char** argv)
         exit(0);
         break;
 
+      case 'P':
+        physical = 1;
+        break;
+
       case 'L':
         physical = 0;
         break;
@@ -65,8 +69,7 @@ int main(int argc, char** argv)
     getcwd(cwd, sizeof(cwd));
   }
   else {
-    char *pwd = getenv("PWD");
-    memcpy(cwd, pwd, strlen(pwd));
+    strncpy(cwd, getenv("PWD"), sizeof(cwd) - 1);
   }
 
 
