@@ -21,13 +21,41 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 
 int main(int argc, char** argv)
 {
   char cwd[512];
   char *lastslash, *nextslash;
   int partsize;
-  unsigned int maxwidth = 40;
+
+  int option;
+  unsigned long maxwidth = 40;
+
+  /* Check command line arguments */
+  while((option = getopt(argc, argv, "hm:")) != -1) {
+    switch(option) {
+      case 'h':
+        printf("Smarter PWD. Usage %s [-m N]\n", argv[0]);
+        exit(0);
+        break;
+
+      case 'm':
+        {
+          char *invalidpart;
+          maxwidth = strtoul(optarg, &invalidpart, 10);
+          if(*invalidpart) {
+            fprintf(stderr, "Invalid number: %s\n", invalidpart);
+            exit(1);
+          }
+        }
+        break;
+
+      default:
+        fprintf(stderr, "Invalid option: %c\n", option);
+        exit(2);
+    }
+  }
 
   getcwd(cwd, sizeof(cwd));
   lastslash = cwd;
@@ -45,7 +73,7 @@ int main(int argc, char** argv)
     lastslash += 2;
   }
 
-  printf("%s", cwd);
+  printf("%s\n", cwd);
 
   return 0;
 }
