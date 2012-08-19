@@ -1,6 +1,6 @@
 # Smarter PWD
 
-Smarter PWD is an *improved pwd for long paths*. If your command line prompt displays current path, it is bit annoying when you go into a really deep directory: your cursor will be placed almost at the right side of the terminal window, leaving almost no space for user input and forcing a jump to a new line. SPWD is a replacement for full path command (with `\w` in Bash), that will generate a trimmed pwd that fits to a fixed width.
+Smarter PWD is an *improved pwd for long paths*. If your command line prompt displays current path, it is a bit annoying when you go into a really deep directory: your cursor will be placed almost at the right side of the terminal window, leaving almost no space for user input and forcing a jump to a new line. SPWD is a replacement for full path command (with `\w` in Bash), that will generate a trimmed pwd that fits to a fixed width.
 
 For example, take a look at this typical path:
 
