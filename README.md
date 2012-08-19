@@ -1,6 +1,6 @@
 # Smarter PWD
 
-This is something like a *pwd for long paths*. If you print the full path in your command line prompt, it becomes a bit annoying when you go into a really deep directory: your cursor will be almost at the right side of the terminal window, so it will be inevitable to jump to another line. Now, with SPWD, instead of adding the full path (with `\w` in Bash), you can add a call to this program, and the path will trimmed to fix in your preferred width.
+Smarter PWD is an *improved pwd for long paths*. If your command line prompt displays current path, it is a bit annoying when you go into a really deep directory: your cursor will be placed almost at the right side of the terminal window, leaving almost no space for user input and forcing a jump to a new line. SPWD is a replacement for full path command (with `\w` in Bash), that will generate a trimmed pwd that fits to a fixed width.
 
 For example, take a look at this typical path:
 
@@ -19,7 +19,7 @@ As you can see, the path parts are reduced to their first letter, until the full
 
 You can force that the minimal path is always used with `spwd -m 1`.
 
-SPWD is written in plain C to reduce overhead as most as possible.
+SPWD is written in plain C to reduce overhead as much as possible.
 
 ## Installation
 
@@ -44,4 +44,4 @@ You have to replace the `\w` string with `$(/some/path/spwd/spwd -m 40)`, like
 export PS1='\u@\h:$(/some/path/spwd/spwd -m 40)\$ '
 ```
 
-Then, reload the session and you will enjoy your shorter paths.
+Reload the session and enjoy your shorter paths.
