@@ -25,9 +25,9 @@
 int main(int argc, char** argv)
 {
   char cwd[512];
-  char *lastslash, *nextslash, *home;
+  char *home;
+  char *lastslash, *nextslash;
   unsigned char physical = 1;
-  int partsize, homelen;
 
   int option;
   unsigned long maxwidth = 40;
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 
   /* Check if we are under home. If so, we can short it with ~ */
   if((home = getenv("HOME"))) {
-    homelen = strlen(home);
+    int homelen = strlen(home);
     if(strncmp(home, cwd, homelen) == 0) {
       cwd[0] = '~';
       memmove(cwd + 1, cwd + homelen, strlen(cwd));
@@ -85,6 +85,8 @@ int main(int argc, char** argv)
   /* Short parts */
   lastslash = index(cwd, '/');
   while(strlen(cwd) > maxwidth) {
+    int partsize;
+
     nextslash = index(lastslash + 1, '/');
 
     if(nextslash == NULL)
