@@ -22,15 +22,18 @@
 #include <string.h>
 #include <stdlib.h>
 
-int main(int argc, char** argv)
-{
-  char cwd[512];
-  char *home;
-  char *lastslash, *nextslash;
-  unsigned char physical = 1;
+struct options {
+  unsigned char physical;
+  unsigned long maxwidth;
+  
+};
 
+void parseargs(int argc, char** argv, struct options* options) {
   int option;
-  unsigned long maxwidth = 40;
+
+  /* Default values */
+  options->physical = 1;
+  options->maxwidth = 40;
 
   /* Check command line arguments */
   while((option = getopt(argc, argv, "PLhm:")) != -1) {
@@ -41,19 +44,19 @@ int main(int argc, char** argv)
         break;
 
       case 'P':
-        physical = 1;
+        options->physical = 1;
         break;
 
       case 'L':
-        physical = 0;
+        options->physical = 0;
         break;
 
       case 'm':
         {
           char *invalidpart;
-          maxwidth = strtoul(optarg, &invalidpart, 10);
+          options->maxwidth = strtoul(optarg, &invalidpart, 10);
           if(*invalidpart) {
-            fprintf(stderr, "Invalid number: %s\n", invalidpart);
+            fprintf(stderr, "Invalid number: %s\n", optarg);
             exit(1);
           }
         }
@@ -64,14 +67,21 @@ int main(int argc, char** argv)
         exit(2);
     }
   }
+}
 
-  if(physical) {
+int main(int argc, char** argv)
+{
+  struct options options;
+  char cwd[512];
+  char *home;
+  char *lastslash, *nextslash;
+
+  parseargs(argc, argv, &options);
+
+  if(options.physical)
     getcwd(cwd, sizeof(cwd));
-  }
-  else {
+  else
     strncpy(cwd, getenv("PWD"), sizeof(cwd) - 1);
-  }
-
 
   /* Check if we are under home. If so, we can short it with ~ */
   if((home = getenv("HOME"))) {
@@ -84,7 +94,7 @@ int main(int argc, char** argv)
 
   /* Short parts */
   lastslash = index(cwd, '/');
-  while(strlen(cwd) > maxwidth) {
+  while(strlen(cwd) > options.maxwidth) {
     int partsize;
 
     nextslash = index(lastslash + 1, '/');
