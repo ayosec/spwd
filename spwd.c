@@ -21,10 +21,12 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 struct options {
   unsigned char physical;
   unsigned long maxwidth;
+  char*         pathalias;
   
 };
 
@@ -34,9 +36,10 @@ void parseargs(int argc, char** argv, struct options* options) {
   /* Default values */
   options->physical = 1;
   options->maxwidth = 40;
+  options->pathalias = NULL;
 
   /* Check command line arguments */
-  while((option = getopt(argc, argv, "PLhm:")) != -1) {
+  while((option = getopt(argc, argv, "PLhm:a:")) != -1) {
     switch(option) {
       case 'h':
         printf("Smarter PWD. Usage %s [OPTION]\n", argv[0]);
@@ -51,6 +54,10 @@ void parseargs(int argc, char** argv, struct options* options) {
         options->physical = 0;
         break;
 
+      case 'a':
+        options->pathalias = optarg;
+        break;
+
       case 'm':
         {
           char *invalidpart;
@@ -63,10 +70,19 @@ void parseargs(int argc, char** argv, struct options* options) {
         break;
 
       default:
-        fprintf(stderr, "Invalid option: %c\n", option);
         exit(2);
     }
   }
+}
+
+void strchomp(char* str) {
+  char* lastspace = NULL;
+  for(; *str; str++)
+    if(isspace(*str))
+      lastspace = str;
+
+  if(lastspace)
+    *lastspace = '\0';
 }
 
 int main(int argc, char** argv)
@@ -83,17 +99,61 @@ int main(int argc, char** argv)
   else
     strncpy(cwd, getenv("PWD"), sizeof(cwd) - 1);
 
+  /* We are going to use lastslash as a flag to detect if the
+   * original path have been modified. If it remains NULL,
+   * it means that nobody has modified it. If it is a non NULL
+   * value, it will be the first slash to be shorted
+   */
+  lastslash = NULL;
+
   /* Check if we are under home. If so, we can short it with ~ */
   if((home = getenv("HOME"))) {
     int homelen = strlen(home);
     if(strncmp(home, cwd, homelen) == 0) {
       cwd[0] = '~';
-      memmove(cwd + 1, cwd + homelen, strlen(cwd));
+      lastslash = cwd + 1;
+      memmove(lastslash, cwd + homelen, strlen(cwd));
+    }
+  }
+
+  /* Find a possible alias for the current directory */
+  if(options.pathalias) {
+    FILE *faliases = fopen(options.pathalias, "r");
+    if(faliases == NULL) {
+      perror(options.pathalias);
+    } else {
+      char line[1024];
+      char* separator;
+      int partlen;
+
+      while(fgets(line, sizeof(line), faliases)) {
+        if((separator = index(line, '='))) {
+          strchomp(line);
+
+          *separator = '\0';
+          partlen = strlen(line);
+
+          if((partlen < sizeof(cwd)) && strncmp(separator + 1, cwd, strlen(separator + 1)) == 0) {
+            /* This will fail if the alias is longer than the path, but
+             * I can assume that "nobody" will create an alias like that,
+             * right?
+             */
+            memcpy(cwd, line, partlen);
+            memmove(cwd + partlen, cwd + strlen(separator + 1), sizeof(cwd) - partlen);
+            lastslash = cwd + partlen;
+            break;
+          }
+        }
+      }
+
+      fclose(faliases);
     }
   }
 
   /* Short parts */
-  lastslash = index(cwd, '/');
+  if(lastslash == NULL)
+    lastslash = index(cwd, '/');
+
   while(strlen(cwd) > options.maxwidth) {
     int partsize;
 

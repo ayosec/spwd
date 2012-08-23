@@ -45,3 +45,24 @@ export PS1='\u@\h:$(/some/path/spwd/spwd -m 40)\$ '
 ```
 
 Reload the session and enjoy your shorter paths.
+
+## Aliases
+
+You can create aliases for your common roots. For example, if your projects are under `/here/are/my/projects`, you can define the alias `(My Projects)` for that path, and `/here/are/my/projects/something` will be printed as `(My Projects)/something`.
+
+The first step is to create a file with all the aliases. The format is one alias per line, using `=` as separator. You can put the file in your home directory, like `~/.spwd.alias`
+
+For example,
+
+```
+(My Projects)=/here/are/my/projects
+(Work)=/home/user/content/work
+```
+
+The parenthesis is just to make clearer that the path is an alias. You can put whatever you want.
+
+Then, you need to change the `$PS1` value, and add `-a ~/.spwd.alias`. Like
+
+```
+export PS1='\u@\h:$(/some/path/spwd/spwd -m 40 -a ~/.spwd.alias)\$ '
+```
