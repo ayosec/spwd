@@ -94,6 +94,8 @@ int main(int argc, char** argv)
 
   parseargs(argc, argv, &options);
 
+  strcpy(cwd, "<?>"); /* Default value to be used when getcwd/PWD fails */
+
   if(options.physical)
     getcwd(cwd, sizeof(cwd));
   else
