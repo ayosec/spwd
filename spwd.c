@@ -126,7 +126,7 @@ int main(int argc, char** argv)
     } else {
       char line[1024];
       char* separator;
-      int partlen;
+      size_t partlen;
 
       while(fgets(line, sizeof(line), faliases)) {
         if((separator = index(line, '='))) {
