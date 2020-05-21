@@ -42,7 +42,7 @@ void parseargs(int argc, char** argv, struct options* options) {
   while((option = getopt(argc, argv, "PLhm:a:")) != -1) {
     switch(option) {
       case 'h':
-        printf("Smarter PWD. Usage %s [OPTION]\n", argv[0]);
+        printf("ShorterPWD. Usage %s [OPTION]\n", argv[0]);
         exit(0);
         break;
 
