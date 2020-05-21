@@ -1,14 +1,15 @@
+BIN = spwd
+SOURCES = spwd.c
 
-all: spwd
-
-spwd: spwd.c
-	gcc -Wall -O2 -o spwd spwd.c
-
-debug:
-	gcc -Wall -g -O2 -o spwd.debug spwd.c
-	gdb ./spwd.debug
+$(BIN): $(SOURCES)
+	gcc -Wall -Wextra -Wpedantic -O2 -o $(BIN) $(SOURCES)
 
 clean:
-	rm spwd
+	rm -f $(BIN)
 
-.PHONY: clean all debug
+all: $(BIN)
+
+install: all
+	install -s -m 0755 -o root -g root spwd /usr/local/bin
+
+.PHONY: all clean install
