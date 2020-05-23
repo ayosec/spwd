@@ -1,0 +1,33 @@
+spwd 0.1
+https://github.com/ayosec/spwd
+
+ShorterPWD prints the current path, trimming parent names to adjust the width
+to the specified width.
+
+Usage:
+
+    spwd [OPTIONS]
+
+    PS1='\u@\h $(spwd -m 40)\$ '
+
+
+Options:
+
+    -P            Print physical path (getcwd(3)).
+    -L            Print logical path ($PWD),
+    -m [width]    Set target width for the printed path.
+    -a [path]     Path of the aliases file.
+
+
+Using Aliases:
+
+    spwd can replace a path with an alias found in the file indicated with -a.
+    The file contains one alias per line, separated with a '='.
+
+    For example, with this file:
+
+        (My Projects)=/here/are/my/projects
+        (Work)=/home/user/content/work
+
+    spwd will print "(Work)/foo" for the path "/home/user/content/work/foo".
+

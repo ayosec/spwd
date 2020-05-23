@@ -15,11 +15,35 @@
  * Author: Ayose <ayosec@gmail.com>
  */
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include "spwd.h"
+
+#define STDOUT 1
+
+static void usage() {
+  char usage[] = {
+#include "../build/USAGE.h"
+  };
+
+  ssize_t len = sizeof(usage);
+  ssize_t offset = 0;
+  while(offset < len) {
+    ssize_t w = write(STDOUT, usage + offset, len - offset);
+    if(w > 0) {
+      offset += w;
+    }
+
+    if(w == 0 || (w < 0 && errno != EAGAIN)) {
+      break;
+    }
+  }
+
+  exit(0);
+}
 
 void extract_options(int argc, char** argv, struct options* options) {
   int option;
@@ -33,8 +57,7 @@ void extract_options(int argc, char** argv, struct options* options) {
   while((option = getopt(argc, argv, "PLhm:a:")) != -1) {
     switch(option) {
       case 'h':
-        printf("ShorterPWD. Usage %s [OPTION]\n", argv[0]);
-        exit(0);
+        usage();
         break;
 
       case 'P':
@@ -65,4 +88,3 @@ void extract_options(int argc, char** argv, struct options* options) {
     }
   }
 }
-
