@@ -33,8 +33,8 @@ zeros() {
   head < /dev/zero -c "$1" | tr \\0 0
 }
 
-make -s debug
-BIN="$(pwd)/spwd.dbg"
+make -s
+BIN="$(pwd)/build/spwd.dbg"
 
 # Use a known path to launch tests
 

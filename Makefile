@@ -1,22 +1,30 @@
-BIN = spwd
-BINDBG = spwd.dbg
-SOURCES = spwd.c
+BUILD = build
+BIN = $(BUILD)/spwd
+BINDBG = $(BUILD)/spwd.dbg
 
-$(BIN): $(SOURCES)
-	gcc -Wall -Wextra -Wpedantic -O2 -o $(BIN) $(SOURCES)
+CFLAGS = -Wall -Wextra -Wpedantic -O2
+OBJECTS := $(patsubst src/%.c,$(BUILD)/%.o,$(wildcard src/*.c))
 
-$(BINDBG): $(SOURCES)
-	gcc -Wall -Wextra -Wpedantic -g -O2 -o $(BINDBG) $(SOURCES)
+all: $(BIN) $(BINDBG)
+
+build/%.o: src/%.c
+	@mkdir -p $(BUILD)
+	gcc $(CFLAGS) -c -o $@ $<
+
+$(BIN): $(OBJECTS)
+	gcc $(CFLAGS) -o $(BIN) $(OBJECTS)
+
+$(BINDBG): $(OBJECTS)
+	gcc $(CFLAGS) -g -o $(BINDBG) $(OBJECTS)
 
 clean:
-	rm -f $(BIN) $(BINDBG)
-
-all: $(BIN)
+	rm -f $(BIN) $(BINDBG) $(OBJECTS)
+	rmdir $(BUILD)
 
 debug: $(BINDBG)
 
-install: all
-	install -s -m 0755 -o root -g root spwd /usr/local/bin
+install: $(BIN)
+	install -s -m 0755 -o root -g root $(BIN) /usr/local/bin
 
 test: all
 	./tests.sh
