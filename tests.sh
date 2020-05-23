@@ -79,8 +79,8 @@ spec "use logical paths" \
   "/x"
 
 spec "support long values" \
-  "PWD=/$(zeros 1000) $BIN -L" \
-  "/$(zeros 510)"
+  "PWD=/$(zeros 5000) $BIN -L" \
+  "/$(zeros 4094)"
 
 spec "logical to physical" \
   "PWD=/x $BIN -L -P -m 1" \
@@ -98,6 +98,8 @@ Invalid lines
 
 # NOP=/tmp/.spwd/lorem/ipsum
 THE IPSUM=/tmp/.spwd/lorem/ipsum
+
+LONG / PATH=/LP
 EOF
 
 spec "first path alias" \
@@ -108,6 +110,9 @@ spec "second path alias" \
   "cd /tmp/.spwd/lorem/ipsum/dolor/sit/amet/consectetur && $BIN -a $ALIASES -m 100" \
   "[AMET]/consectetur"
 
+spec "longer alias" \
+  "PWD=/LP/X0000/Y1111 $BIN -a $ALIASES -L -m 10" \
+  "LONG / PATH/X/Y1111"
 
 
 exit $EXIT

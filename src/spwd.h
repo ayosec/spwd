@@ -15,8 +15,12 @@
  * Author: Ayose <ayosec@gmail.com>
  */
 
+#define _GNU_SOURCE
+
 #ifndef _SPWD_H
 #define _SPWD_H
+
+#include <unistd.h>
 
 struct options {
   unsigned char physical;
@@ -30,5 +34,8 @@ void extract_options(int argc, char** argv, struct options* options);
 
 // strings.c
 char* str_trim(char* str);
+
+// alias.c
+void replace_alias(char* path, char* cwd, size_t cwd_size, char** lastslash);
 
 #endif

@@ -15,9 +15,9 @@
  * Author: Ayose <ayosec@gmail.com>
  */
 
-#include <stddef.h>
-#include <ctype.h>
 #include "spwd.h"
+#include <ctype.h>
+#include <stddef.h>
 
 char* str_trim(char* str) {
   char* lastspace = NULL;

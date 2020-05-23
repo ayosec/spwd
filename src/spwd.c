@@ -15,19 +15,16 @@
  * Author: Ayose <ayosec@gmail.com>
  */
 
-#define _GNU_SOURCE
-
+#include "spwd.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include "spwd.h"
 
 int main(int argc, char** argv)
 {
   struct options options;
-  char cwd[512];
+  char cwd[4096];
   char *var;
   char *lastslash, *nextslash;
 
@@ -63,45 +60,7 @@ int main(int argc, char** argv)
 
   /* Find a possible alias for the current directory */
   if(options.pathalias) {
-    FILE *faliases = fopen(options.pathalias, "r");
-    if(faliases == NULL) {
-      perror(options.pathalias);
-    } else {
-      char buf[1024];
-      char *alias, *target, *separator;
-      size_t partlen;
-
-      while(fgets(buf, sizeof(buf), faliases)) {
-        if(buf[0] == '#') {
-          continue;
-        }
-
-        if((separator = index(buf, '='))) {
-          *separator = '\0';
-          alias = str_trim(buf);
-          target = str_trim(separator + 1);
-
-          if(alias == NULL) {
-            continue;
-          }
-
-          partlen = strlen(alias);
-
-          if((partlen < sizeof(cwd)) && strncmp(target, cwd, strlen(target)) == 0) {
-            /* This will fail if the alias is longer than the path, but
-             * I can assume that "nobody" will create an alias like that,
-             * right?
-             */
-            memcpy(cwd, alias, partlen);
-            memmove(cwd + partlen, cwd + strlen(target), sizeof(cwd) - partlen);
-            lastslash = cwd + partlen;
-            break;
-          }
-        }
-      }
-
-      fclose(faliases);
-    }
+    replace_alias(options.pathalias, cwd, sizeof(cwd), &lastslash);
   }
 
   /* Short parts */
