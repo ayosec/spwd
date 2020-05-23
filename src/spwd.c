@@ -17,85 +17,12 @@
 
 #define _GNU_SOURCE
 
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
-
-struct options {
-  unsigned char physical;
-  unsigned long maxwidth;
-  char*         pathalias;
-  
-};
-
-void parseargs(int argc, char** argv, struct options* options) {
-  int option;
-
-  /* Default values */
-  options->physical = 1;
-  options->maxwidth = 40;
-  options->pathalias = NULL;
-
-  /* Check command line arguments */
-  while((option = getopt(argc, argv, "PLhm:a:")) != -1) {
-    switch(option) {
-      case 'h':
-        printf("ShorterPWD. Usage %s [OPTION]\n", argv[0]);
-        exit(0);
-        break;
-
-      case 'P':
-        options->physical = 1;
-        break;
-
-      case 'L':
-        options->physical = 0;
-        break;
-
-      case 'a':
-        options->pathalias = optarg;
-        break;
-
-      case 'm':
-        {
-          char *invalidpart;
-          options->maxwidth = strtoul(optarg, &invalidpart, 10);
-          if(*invalidpart) {
-            fprintf(stderr, "Invalid number: %s\n", optarg);
-            exit(1);
-          }
-        }
-        break;
-
-      default:
-        exit(2);
-    }
-  }
-}
-
-char* str_trim(char* str) {
-  char* lastspace = NULL;
-  char* start = NULL;
-  for(; *str; str++) {
-    if(isspace(*str)) {
-      lastspace = str;
-    } else {
-      lastspace = NULL;
-
-      if(start == NULL) {
-        start = str;
-      }
-    }
-  }
-
-  if(lastspace) {
-    *lastspace = '\0';
-  }
-
-  return start;
-}
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include "spwd.h"
 
 int main(int argc, char** argv)
 {
@@ -104,7 +31,7 @@ int main(int argc, char** argv)
   char *var;
   char *lastslash, *nextslash;
 
-  parseargs(argc, argv, &options);
+  extract_options(argc, argv, &options);
 
   strcpy(cwd, "<?>"); /* Default value to be used when getcwd/PWD fails */
 

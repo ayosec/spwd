@@ -7,7 +7,7 @@ OBJECTS := $(patsubst src/%.c,$(BUILD)/%.o,$(wildcard src/*.c))
 
 all: $(BIN) $(BINDBG)
 
-build/%.o: src/%.c
+build/%.o: src/%.c $(wildcard src/*.h)
 	@mkdir -p $(BUILD)
 	gcc $(CFLAGS) -c -o $@ $<
 
