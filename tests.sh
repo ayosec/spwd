@@ -91,7 +91,7 @@ spec "logical to physical" \
 
 ALIASES=/tmp/.spwd/aliases
 cat > "$ALIASES" <<EOF
-[AMET] = /tmp/.spwd/lorem/ipsum/dolor/sit/amet
+[AMET]  = /tmp/.spwd/lorem/ipsum/dolor/sit/amet
 
 Invalid lines
 =

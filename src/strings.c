@@ -24,7 +24,9 @@ char* str_trim(char* str) {
   char* start = NULL;
   for(; *str; str++) {
     if(isspace(*str)) {
-      lastspace = str;
+      if(lastspace == NULL) {
+        lastspace = str;
+      }
     } else {
       lastspace = NULL;
 
