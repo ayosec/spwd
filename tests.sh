@@ -96,12 +96,13 @@ cat > "$ALIASES" <<EOF
 Invalid lines
 =
 
-IPSUM=/tmp/.spwd/lorem/ipsum
+# NOP=/tmp/.spwd/lorem/ipsum
+THE IPSUM=/tmp/.spwd/lorem/ipsum
 EOF
 
 spec "first path alias" \
   "PWD=/tmp/.spwd/lorem/ipsum/dolor $BIN -a $ALIASES -L -m 100" \
-  "IPSUM/dolor"
+  "THE IPSUM/dolor"
 
 spec "second path alias" \
   "cd /tmp/.spwd/lorem/ipsum/dolor/sit/amet/consectetur && $BIN -a $ALIASES -m 100" \

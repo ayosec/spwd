@@ -81,8 +81,12 @@ char* str_trim(char* str) {
   for(; *str; str++) {
     if(isspace(*str)) {
       lastspace = str;
-    } else if(start == NULL) {
-      start = str;
+    } else {
+      lastspace = NULL;
+
+      if(start == NULL) {
+        start = str;
+      }
     }
   }
 
@@ -141,6 +145,10 @@ int main(int argc, char** argv)
       size_t partlen;
 
       while(fgets(buf, sizeof(buf), faliases)) {
+        if(buf[0] == '#') {
+          continue;
+        }
+
         if((separator = index(buf, '='))) {
           *separator = '\0';
           alias = str_trim(buf);
