@@ -89,17 +89,21 @@ int main(int argc, char** argv)
 {
   struct options options;
   char cwd[512];
-  char *home;
+  char *var;
   char *lastslash, *nextslash;
 
   parseargs(argc, argv, &options);
 
   strcpy(cwd, "<?>"); /* Default value to be used when getcwd/PWD fails */
 
-  if(options.physical)
+  if(options.physical) {
     getcwd(cwd, sizeof(cwd));
-  else
-    strncpy(cwd, getenv("PWD"), sizeof(cwd) - 1);
+  } else {
+    if((var = getenv("PWD"))) {
+      memset(cwd, 0, sizeof(cwd));
+      strncpy(cwd, var, sizeof(cwd) - 1);
+    }
+  }
 
   /* We are going to use lastslash as a flag to detect if the
    * original path have been modified. If it remains NULL,
@@ -109,9 +113,9 @@ int main(int argc, char** argv)
   lastslash = NULL;
 
   /* Check if we are under home. If so, we can short it with ~ */
-  if((home = getenv("HOME"))) {
-    int homelen = strlen(home);
-    if(strncmp(home, cwd, homelen) == 0) {
+  if((var = getenv("HOME"))) {
+    int homelen = strlen(var);
+    if(strncmp(var, cwd, homelen) == 0) {
       cwd[0] = '~';
       lastslash = cwd + 1;
       memmove(lastslash, cwd + homelen, strlen(cwd));
@@ -156,7 +160,7 @@ int main(int argc, char** argv)
   if(lastslash == NULL)
     lastslash = index(cwd, '/');
 
-  while(strlen(cwd) > options.maxwidth) {
+  while(lastslash != NULL && strlen(cwd) > options.maxwidth) {
     int partsize;
 
     nextslash = index(lastslash + 1, '/');
