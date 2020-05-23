@@ -75,14 +75,22 @@ void parseargs(int argc, char** argv, struct options* options) {
   }
 }
 
-void strchomp(char* str) {
+char* str_trim(char* str) {
   char* lastspace = NULL;
-  for(; *str; str++)
-    if(isspace(*str))
+  char* start = NULL;
+  for(; *str; str++) {
+    if(isspace(*str)) {
       lastspace = str;
+    } else if(start == NULL) {
+      start = str;
+    }
+  }
 
-  if(lastspace)
+  if(lastspace) {
     *lastspace = '\0';
+  }
+
+  return start;
 }
 
 int main(int argc, char** argv)
@@ -128,24 +136,29 @@ int main(int argc, char** argv)
     if(faliases == NULL) {
       perror(options.pathalias);
     } else {
-      char line[1024];
-      char* separator;
+      char buf[1024];
+      char *alias, *target, *separator;
       size_t partlen;
 
-      while(fgets(line, sizeof(line), faliases)) {
-        if((separator = index(line, '='))) {
-          strchomp(line);
-
+      while(fgets(buf, sizeof(buf), faliases)) {
+        if((separator = index(buf, '='))) {
           *separator = '\0';
-          partlen = strlen(line);
+          alias = str_trim(buf);
+          target = str_trim(separator + 1);
 
-          if((partlen < sizeof(cwd)) && strncmp(separator + 1, cwd, strlen(separator + 1)) == 0) {
+          if(alias == NULL) {
+            continue;
+          }
+
+          partlen = strlen(alias);
+
+          if((partlen < sizeof(cwd)) && strncmp(target, cwd, strlen(target)) == 0) {
             /* This will fail if the alias is longer than the path, but
              * I can assume that "nobody" will create an alias like that,
              * right?
              */
-            memcpy(cwd, line, partlen);
-            memmove(cwd + partlen, cwd + strlen(separator + 1), sizeof(cwd) - partlen);
+            memcpy(cwd, alias, partlen);
+            memmove(cwd + partlen, cwd + strlen(target), sizeof(cwd) - partlen);
             lastslash = cwd + partlen;
             break;
           }
