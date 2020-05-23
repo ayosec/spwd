@@ -18,4 +18,7 @@ debug: $(BINDBG)
 install: all
 	install -s -m 0755 -o root -g root spwd /usr/local/bin
 
+test: all
+	./tests.sh
+
 .PHONY: all debug clean install test
