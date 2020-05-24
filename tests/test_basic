@@ -10,4 +10,8 @@ spec "only last path" \
   "$BIN -m 1" \
   "/t/./l/i/d/s/a/consectetur"
 
+spec "trim short paths" \
+  "PWD=/aa/bb/c/dd $BIN -L -m 1" \
+  "/a/b/c/dd"
+
 # vim: ft=sh

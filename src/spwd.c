@@ -79,7 +79,7 @@ int main(int argc, char** argv)
       break;
 
     partsize = nextslash - lastslash;
-    if(partsize > 3)
+    if(partsize > 2)
       memmove(lastslash + 2, nextslash, len - partsize + 1);
 
     lastslash += 2;
