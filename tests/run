@@ -4,7 +4,7 @@ set -euo pipefail
 
 FAILURES=0
 ROOT="$(realpath "$(dirname "$0")/..")"
-BIN="$ROOT/build/spwd.dbg"
+BIN="$ROOT/build/spwd"
 
 . "$(dirname "$0")"/utils
 

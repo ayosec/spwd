@@ -1,31 +1,26 @@
 BUILD = build
 BIN = $(BUILD)/spwd
-BINDBG = $(BUILD)/spwd.dbg
 
 CFLAGS = -Wall -Wextra -Wpedantic -O2
 OBJECTS := $(patsubst src/%.c,$(BUILD)/%.o,$(wildcard src/*.c))
 
-all: $(BIN) $(BINDBG)
-
-build/%.o: src/%.c $(wildcard src/*.h) build/USAGE.h
-	@mkdir -p $(BUILD)
-	gcc $(CFLAGS) -c -o $@ $<
+all: $(BIN)
 
 build/USAGE.h: src/USAGE.txt
-	@mkdir -p $(BUILD)
+	@mkdir -p $(dir $@)
 	xxd -i < $< > $@
 
-$(BIN): $(OBJECTS)
-	gcc $(CFLAGS) -o $(BIN) $(OBJECTS)
+build/%.o: src/%.c $(wildcard src/*.h) build/USAGE.h
+	@mkdir -p $(dir $@)
+	gcc $(CFLAGS) -c -o $@ $<
 
-$(BINDBG): $(OBJECTS)
-	gcc $(CFLAGS) -g -o $(BINDBG) $(OBJECTS)
+$(BIN): $(OBJECTS)
+	@mkdir -p $(dir $@)
+	gcc $(CFLAGS) -g -o $@ $(OBJECTS)
 
 clean:
-	rm -f $(BIN) $(BINDBG) $(OBJECTS) build/USAGE.h
-	rmdir $(BUILD)
-
-debug: $(BINDBG)
+	rm -f $(BIN) $(OBJECTS) build/USAGE.h
+	rmdir $(BUILD) || echo "$(BUILD) is not empty"
 
 install: $(BIN)
 	install -s -m 0755 -o root -g root $(BIN) /usr/local/bin
@@ -33,4 +28,4 @@ install: $(BIN)
 test: all
 	@./tests/run
 
-.PHONY: all debug clean install test
+.PHONY: all clean install test
