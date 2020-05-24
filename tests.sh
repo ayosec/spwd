@@ -86,6 +86,9 @@ spec "logical to physical" \
   "PWD=/x $BIN -L -P -m 1" \
   "/t/./l/i/d/s/a/consectetur"
 
+spec "logical with no slash" \
+  "PWD=abcdef $BIN -L -m 1" \
+  "abcdef"
 
 # Path aliases
 
