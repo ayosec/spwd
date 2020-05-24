@@ -18,19 +18,22 @@
 #include "spwd.h"
 #include <ctype.h>
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 int main(int argc, char** argv)
 {
   struct options options;
+  size_t len;
   char cwd[4096];
   char *var;
   char *lastslash, *nextslash;
 
   extract_options(argc, argv, &options);
 
-  strcpy(cwd, "<?>"); /* Default value to be used when getcwd/PWD fails */
+  // Default value
+  strcpy(cwd, "<?>");
 
   if(options.physical) {
     getcwd(cwd, sizeof(cwd));
@@ -48,13 +51,13 @@ int main(int argc, char** argv)
    */
   lastslash = NULL;
 
-  /* Check if we are under home. If so, we can short it with ~ */
+  // Check if we are under home. If so, we can replace it with '~'
   if((var = getenv("HOME"))) {
-    int homelen = strlen(var);
-    if(strncmp(var, cwd, homelen) == 0) {
+    len = strlen(var);
+    if(strncmp(var, cwd, len) == 0) {
       cwd[0] = '~';
       lastslash = cwd + 1;
-      memmove(lastslash, cwd + homelen, strlen(cwd));
+      memmove(lastslash, cwd + len, strlen(cwd) - len + 1);
     }
   }
 
@@ -63,12 +66,12 @@ int main(int argc, char** argv)
     replace_alias(options.pathalias, cwd, sizeof(cwd), &lastslash);
   }
 
-  /* Short parts */
+  /* Trim parents paths */
   if(lastslash == NULL)
     lastslash = index(cwd, '/');
 
-  while(lastslash != NULL && strlen(cwd) > options.maxwidth) {
-    int partsize;
+  while((len = strlen(cwd)) > options.maxwidth && lastslash != NULL) {
+    ptrdiff_t partsize;
 
     nextslash = index(lastslash + 1, '/');
 
@@ -77,7 +80,7 @@ int main(int argc, char** argv)
 
     partsize = nextslash - lastslash;
     if(partsize > 3)
-      memmove(lastslash + 2, nextslash, strlen(cwd) + 1);
+      memmove(lastslash + 2, nextslash, len - partsize + 1);
 
     lastslash += 2;
   }
