@@ -1,3 +1,5 @@
+DEST ?= /usr/local
+
 BUILD = build
 BIN = $(BUILD)/spwd
 
@@ -23,7 +25,7 @@ clean:
 	rmdir $(BUILD) || echo "$(BUILD) is not empty"
 
 install: $(BIN)
-	install -s -m 0755 -o root -g root $(BIN) /usr/local/bin
+	install -s -m 0755 -o root -g root $(BIN) $(DEST)/bin/spwd
 
 test: all
 	@./tests/run
