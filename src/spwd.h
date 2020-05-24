@@ -34,6 +34,7 @@ void extract_options(int argc, char** argv, struct options* options);
 
 // strings.c
 char* str_trim(char* str);
+void write_stdout(char* data, ssize_t len);
 
 // alias.c
 void replace_alias(char* path, char* cwd, size_t cwd_size, char** lastslash);

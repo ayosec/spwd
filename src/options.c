@@ -16,31 +16,16 @@
  */
 
 #include "spwd.h"
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define STDOUT 1
 
 static void usage() {
   char usage[] = {
 #include "../build/USAGE.h"
   };
 
-  ssize_t len = sizeof(usage);
-  ssize_t offset = 0;
-  while(offset < len) {
-    ssize_t w = write(STDOUT, usage + offset, len - offset);
-    if(w > 0) {
-      offset += w;
-    }
-
-    if(w == 0 || (w < 0 && errno != EAGAIN)) {
-      break;
-    }
-  }
-
+  write_stdout(usage, sizeof(usage));
   exit(0);
 }
 

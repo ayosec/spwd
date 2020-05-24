@@ -17,7 +17,24 @@
 
 #include "spwd.h"
 #include <ctype.h>
+#include <errno.h>
 #include <stddef.h>
+
+#define STDOUT 1
+
+void write_stdout(char* data, ssize_t len) {
+  ssize_t offset = 0;
+  while(offset < len) {
+    ssize_t w = write(STDOUT, data + offset, len - offset);
+    if(w > 0) {
+      offset += w;
+    }
+
+    if(w == 0 || (w < 0 && errno != EAGAIN)) {
+      return;
+    }
+  }
+}
 
 char* str_trim(char* str) {
   char* lastspace = NULL;
