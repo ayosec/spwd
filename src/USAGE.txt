@@ -22,7 +22,9 @@ Options:
 Using Aliases:
 
     spwd can replace a path with an alias found in the file indicated with -a.
+
     The file contains one alias per line, separated with a '='.
+    Spaces around '=' are ignored.
 
     For example, with this file:
 

@@ -1,70 +1,107 @@
 # ShorterPWD
 
-ShorterPWD is an *improved pwd for long paths*. If your command line prompt displays current path, it is a bit annoying when you go into a really deep directory: your cursor will be placed almost at the right side of the terminal window, leaving almost no space for user input and forcing a jump to a new line. SPWD is a replacement for full path command (with `\w` in Bash), that will generate a trimmed pwd that fits to a fixed width.
+ShorterPWD is a tool to show the current path, trimming the parents to fit a certain width. It is intended to be used in the prompt (`PS1` or equivalent).
 
-For example, take a look at this typical path:
+## Example
 
-```
-$ cd /tmp
-$ mkdir -p lorem/ipsum/dolor/sit/amet/consectetur/adipisicing/elit/sed/do/eiusmod
-$ PS1='$(spwd -m 40)$ '
-/tmp$ cd lorem/ipsum/dolor/sit/
-/tmp/lorem/ipsum/dolor/sit$ cd amet/consectetur/adipisicing/elit/
-/t/l/i/d/s/a/c/adipisicing/elit$ cd sed/do/eiusmod/
-/t/l/i/d/s/a/c/a/elit/sed/do/eiusmod$ pwd
-/tmp/lorem/ipsum/dolor/sit/amet/consectetur/adipisicing/elit/sed/do/eiusmod
+First, we start in a *very* long path:
+
+```console
+$ mkdir -p /tmp/lorem/ipsum/dolor/sit/amet/consectetur/adipisicing/elit/sed/do/eiusmod
+
+$ cd /tmp/lorem/ipsum/dolor/sit/amet/consectetur/adipisicing/
 ```
 
-As you can see, the path parts are reduced to their first letter, until the full string is smaller than 40 characters. The last part is never trimmed. The shortest version of the previous path will be `/t/l/i/d/s/a/c/a/e/s/d/eiusmod`.
+Then, with `spwd -m 40` we print the path trimmed to 40 characters:
 
-You can force that the minimal path is always used with `spwd -m 1`.
+```console
+$ spwd -m 40
+/t/l/i/d/s/amet/consectetur/adipisicing
 
-SPWD is written in plain C to reduce overhead as much as possible.
+$ cd elit/sed/do/eiusmod
+
+$ spwd -m 40
+/t/l/i/d/s/a/c/a/elit/sed/do/eiusmod
+
+$ spwd -m 20
+/t/l/i/d/s/a/c/a/e/s/d/eiusmod
+```
+
+The parents are trimmed to their first character until the length of the path is smaller than the value in the `-m` option. The last part is never trimmed.
+
+You can always trim all parents with `spwd -m 0`.
 
 ## Installation
 
-Clone the [repository](https://github.com/ayosec/spwd.git) and compile the program
+Use `make install` to compile and install the tool.
 
 ```
-$ cd /some/path
 $ git clone https://github.com/ayosec/spwd.git
 $ cd spwd
-$ make
+$ make test
+$ sudo make install
 ```
 
-Then, edit your shell initialization script (like `~/.bashrc`), and make a call to `swpd`. If your `$PS1` variable is defined with something like
+By default it is installed in `/usr/local/bin`. If you want a different destination use the `DEST` variable. For example, to install the tool in `/usr/bin`, type:
 
-```
-export PS1='\u@\h:\w\$ '
-```
-
-You have to replace the `\w` string with `$(/some/path/spwd/spwd -m 40)`, like
-
-```
-export PS1='\u@\h:$(/some/path/spwd/spwd -m 40)\$ '
+```bash
+$ sudo make DEST=/usr install
 ```
 
-Reload the session and enjoy your shorter paths.
+## Usage
+
+To use spwd in your prompt, replace the sequence `\w` with `$(spwd -m XX)` in your `PS1` variable.
+
+For example, instead of:
+
+```bash
+PS1='\u@\h \w\$ '
+```
+
+Use:
+
+```bash
+PS1='\u@\h $(spwd -m 40)\$ '
+```
 
 ## Aliases
 
-You can create aliases for your common roots. For example, if your projects are under `/here/are/my/projects`, you can define the alias `(My Projects)` for that path, and `/here/are/my/projects/something` will be printed as `(My Projects)/something`.
+spwd can replace a path prefix with an alias.
 
-The first step is to create a file with all the aliases. The format is one alias per line, using `=` as separator. You can put the file in your home directory, like `~/.spwd.alias`
-
-For example,
+The aliases are defined in a file with the following format:
 
 ```
-(My Projects)=/here/are/my/projects
-(Work)=/home/user/content/work
+alias1 = path1
+
+# Comment
+alias2 = path2
 ```
 
-The parenthesis is just to make clearer that the path is an alias. You can put whatever you want.
+To use them, add the `-a path` option to the `spwd` command.
 
-Then, you need to change the `$PS1` value, and add `-a ~/.spwd.alias`. Like
+Theses aliases are never trimmed.
+
+### Example
+
+First, create a file `~/.config/spwd/aliases`:
 
 ```
-export PS1='\u@\h:$(/some/path/spwd/spwd -m 40 -a ~/.spwd.alias)\$ '
+[My Projects] = /here/are/my/projects
+[Work] = /home/user/content/work
+```
+
+Then, update the `PS1` variable to include the `-a` option:
+
+```bash
+PS1='\u@\h $(spwd -m 40 -a ~/.config/spwd/aliases)\$ '
+```
+
+Now, we can see our alias in the prompt instead of the full path.
+
+```
+~ $ cd /here/are/my/projects/something
+
+[My Projects]/something $
 ```
 
 ## Tests
