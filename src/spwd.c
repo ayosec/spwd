@@ -85,7 +85,8 @@ int main(int argc, char** argv)
     lastslash += 2;
   }
 
-  printf("%s\n", cwd);
+  cwd[len] = '\n';
+  write_stdout(cwd, len + 1);
 
   return 0;
 }
