@@ -1,0 +1,26 @@
+Source: spwd
+Section: utils
+Priority: optional
+Maintainer: Ayose <ayosec@gmail.com>
+Build-Depends:
+ debhelper (>= 12),
+ gcc,
+ m4,
+ make,
+ scdoc,
+ xxd
+Standards-Version: 4.4.1
+Homepage: https://github.com/ayosec/spwd
+Rules-Requires-Root: no
+Vcs-Git: https://github.com/ayosec/spwd.git
+Vcs-Browser: https://github.com/ayosec/spwd
+
+Package: spwd
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends}
+Description: Show the current path, trimming the parents to fit a certain width.
+ ShorterPWD is a tool to show the current path, trimming the parents to fit a
+ certain width. It is intended to be used in the prompt.
+

@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+export CFLAGS = `dpkg-buildflags --get CFLAGS`
+export SPWD_VERSION = $(shell dpkg-parsechangelog -S Version)
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	dh_auto_install -- DEST=debian/spwd/usr
+
+override_dh_auto_build:
+	dh_auto_build -- DEST=debian/spwd/usr all
