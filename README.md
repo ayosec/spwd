@@ -31,39 +31,6 @@ The parents are trimmed to their first character until the length of the path is
 
 You can always trim all parents with `spwd -m 0`.
 
-## Installation
-
-Use `make install` to compile and install the tool.
-
-```
-$ git clone https://github.com/ayosec/spwd.git
-$ cd spwd
-$ make test
-$ sudo make install
-```
-
-By default it is installed in `/usr/local/bin`. If you want a different destination use the `DEST` variable. For example, to install the tool in `/usr/bin`, type:
-
-```bash
-$ sudo make DEST=/usr install
-```
-
-## Usage
-
-To use spwd in your prompt, replace the sequence `\w` with `$(spwd -m XX)` in your `PS1` variable.
-
-For example, instead of:
-
-```bash
-PS1='\u@\h \w\$ '
-```
-
-Use:
-
-```bash
-PS1='\u@\h $(spwd -m 40)\$ '
-```
-
 ## Aliases
 
 spwd can replace a path prefix with an alias.
@@ -102,6 +69,39 @@ Now, we can see our alias in the prompt instead of the full path.
 ~ $ cd /here/are/my/projects/something
 
 [My Projects]/something $
+```
+
+## Installation
+
+Use `make install` to compile and install the tool.
+
+```
+$ git clone https://github.com/ayosec/spwd.git
+$ cd spwd
+$ make test
+$ sudo make install
+```
+
+By default it is installed in `/usr/local/bin`. If you want a different destination use the `DEST` variable. For example, to install the tool in `/usr/bin`, type:
+
+```bash
+$ sudo make DEST=/usr install
+```
+
+## Usage
+
+To use spwd in your prompt, replace the sequence `\w` with `$(spwd -m XX)` in your `PS1` variable.
+
+For example, instead of:
+
+```bash
+PS1='\u@\h \w\$ '
+```
+
+Use:
+
+```bash
+PS1='\u@\h $(spwd -m 40)\$ '
 ```
 
 ## Tests
