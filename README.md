@@ -66,3 +66,7 @@ Then, you need to change the `$PS1` value, and add `-a ~/.spwd.alias`. Like
 ```
 export PS1='\u@\h:$(/some/path/spwd/spwd -m 40 -a ~/.spwd.alias)\$ '
 ```
+
+## Tests
+
+To launch the tests type `make test` in the root directory.

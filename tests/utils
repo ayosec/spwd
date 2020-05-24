@@ -1,0 +1,29 @@
+fail() {
+  echo -e "\\033[31m$*\\033[m"
+  let FAILURES=FAILURES+1
+  return 0
+}
+
+spec() {
+  title="$1"
+  cmd="$2"
+  expected="$3"
+
+  printf "* %-30s" "$title"
+  found="$(sh -c "$cmd")" || (fail "EXIT $?"; return 1)
+  if [ "$expected" != "$found" ]
+  then
+    fail FAILED
+    echo "  EXPECTED: $expected"
+    echo "     FOUND: $found"
+    return 0
+  fi
+
+  echo -e "\\033[32mOK\\033[m"
+}
+
+zeros() {
+  head < /dev/zero -c "$1" | tr \\0 0
+}
+
+# vim: ft=sh

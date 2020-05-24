@@ -1,0 +1,13 @@
+spec "full path" \
+  "$BIN -m 100" \
+  "/tmp/.spwd/lorem/ipsum/dolor/sit/amet/consectetur"
+
+spec "short path" \
+  "$BIN -m 30" \
+  "/t/./l/i/d/s/amet/consectetur"
+
+spec "only last path" \
+  "$BIN -m 1" \
+  "/t/./l/i/d/s/a/consectetur"
+
+# vim: ft=sh

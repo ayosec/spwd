@@ -31,6 +31,6 @@ install: $(BIN)
 	install -s -m 0755 -o root -g root $(BIN) /usr/local/bin
 
 test: all
-	./tests.sh
+	@./tests/run
 
 .PHONY: all debug clean install test

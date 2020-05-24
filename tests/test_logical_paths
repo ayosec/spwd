@@ -1,0 +1,17 @@
+spec "use logical paths" \
+  "PWD=/x $BIN -L" \
+  "/x"
+
+spec "support long values" \
+  "PWD=/$(zeros 5000) $BIN -L" \
+  "/$(zeros 4094)"
+
+spec "logical to physical" \
+  "PWD=/x $BIN -L -P -m 1" \
+  "/t/./l/i/d/s/a/consectetur"
+
+spec "logical with no slash" \
+  "PWD=abcdef $BIN -L -m 1" \
+  "abcdef"
+
+# vim: ft=sh

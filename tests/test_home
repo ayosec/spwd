@@ -1,0 +1,14 @@
+spec "use HOME" \
+  "HOME=/tmp/.spwd/lorem $BIN -m 100" \
+  "~/ipsum/dolor/sit/amet/consectetur"
+
+spec "use HOME, short path" \
+  "HOME=/tmp/.spwd/lorem $BIN -m 24" \
+  "~/i/d/s/amet/consectetur"
+
+spec "HOME, only last path" \
+  "HOME=/tmp/.spwd/lorem $BIN -m 1" \
+  "~/i/d/s/a/consectetur"
+
+# vim: ft=sh
+# shellcheck disable=SC2088

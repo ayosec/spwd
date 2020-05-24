@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -euo pipefail
+
+FAILURES=0
+ROOT="$(realpath "$(dirname "$0")/..")"
+BIN="$ROOT/build/spwd.dbg"
+
+. "$(dirname "$0")"/utils
+
+# Use a known path to launch tests
+
+mkdir -p /tmp/.spwd/lorem/ipsum/dolor/sit/amet/consectetur
+cd /tmp/.spwd/lorem/ipsum/dolor/sit/amet/consectetur
+
+# Run every file in tests/test_*
+
+for TEST in "$ROOT/tests/test_"*
+do
+  echo "[$(basename "$TEST" | sed s/^test_//)]"
+  . "$TEST"
+  echo
+done
+
+if [ "$FAILURES" -eq 0 ]
+then
+  EXIT=0
+  COLOR=32
+else
+  EXIT=1
+  COLOR=31
+fi
+
+echo -e "test result: \033[${COLOR}m$FAILURES\033[m failed"
+
+exit $EXIT

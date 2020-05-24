@@ -1,0 +1,26 @@
+ALIASES=/tmp/.spwd/aliases
+cat > "$ALIASES" <<EOF
+[AMET]  = /tmp/.spwd/lorem/ipsum/dolor/sit/amet
+
+Invalid lines
+=
+
+# NOP=/tmp/.spwd/lorem/ipsum
+THE IPSUM=/tmp/.spwd/lorem/ipsum
+
+LONG / PATH=/LP
+EOF
+
+spec "first path alias" \
+  "PWD=/tmp/.spwd/lorem/ipsum/dolor $BIN -a $ALIASES -L -m 100" \
+  "THE IPSUM/dolor"
+
+spec "second path alias" \
+  "cd /tmp/.spwd/lorem/ipsum/dolor/sit/amet/consectetur && $BIN -a $ALIASES -m 100" \
+  "[AMET]/consectetur"
+
+spec "longer alias" \
+  "PWD=/LP/X0000/Y1111 $BIN -a $ALIASES -L -m 10" \
+  "LONG / PATH/X/Y1111"
+
+# vim: ft=sh
